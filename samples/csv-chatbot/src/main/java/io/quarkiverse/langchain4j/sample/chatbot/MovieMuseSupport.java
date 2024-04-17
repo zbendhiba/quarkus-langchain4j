@@ -10,7 +10,7 @@ import io.quarkiverse.langchain4j.RegisterAiService;
 @Singleton
 public interface MovieMuseSupport {
 
-    @SystemMessage("""
+    @UserMessage("""
             Create a SQL query to retrieve the data necessary to
             answer the user's question using data from the database.
             The database contains information about top rated movies from IMDB.
@@ -33,7 +33,8 @@ public interface MovieMuseSupport {
             - gross_total (integer, in millions of US dollars)
 
             Answer only with the query and nothing else.
+            {question}
             """)
-    String createSqlQuery(@UserMessage String question);
+    String createSqlQuery( String question);
 
 }
