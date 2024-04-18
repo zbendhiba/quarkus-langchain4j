@@ -10,7 +10,7 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 
 @Entity
 @Table(name = "movie", schema = "public")
-@CsvRecord(separator = ",")
+@CsvRecord(separator = ",", skipFirstLine = true )
 public class Movie {
 
     @Id
