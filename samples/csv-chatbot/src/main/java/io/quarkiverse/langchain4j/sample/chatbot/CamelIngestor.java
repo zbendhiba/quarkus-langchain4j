@@ -32,24 +32,27 @@ public class CamelIngestor extends RouteBuilder {
     public void configure() throws Exception {
 
         // ingesting a CSV files listing the top 100 movies from IMDB
-        from("file:src/main/resources?fileName=movies.csv")
+      /*  from("file:src/main/resources?fileName=movies.csv")
+                .log("hello")
                 .split().tokenize("\n")
                 .unmarshal().csv()
-                .process(exchange -> {
+                .split().body()
+                .process(e -> {
                     Movie movie = new Movie();
-                    movie.setIndex(Integer.parseInt((String) exchange.getIn().getHeader("CamelCsvRecordIndex")));
-                    movie.setMovieName((String) exchange.getIn().getHeader("movie_name"));
-                    movie.setYearOfRelease(Integer.parseInt((String) exchange.getIn().getHeader("year_of_release")));
-                    movie.setCategory((String) exchange.getIn().getHeader("category"));
-                    movie.setRunTime(Integer.parseInt((String) exchange.getIn().getHeader("run_time")));
-                    movie.setGenre((String) exchange.getIn().getHeader("genre"));
-                    movie.setImdbRating(Float.parseFloat((String) exchange.getIn().getHeader("imdb_rating")));
-                    String votes = (String) exchange.getIn().getHeader("votes");
+                    movie.setIndex(e.getIn().getHeader("CamelCsvRecordIndex", Integer.class));
+                    movie.setMovieName(e.getIn().getHeader("movie_name", String.class));
+                    movie.setYearOfRelease(e.getIn().getHeader("year_of_release", Integer.class));
+                    movie.setCategory(e.getIn().getHeader("category", String.class));
+                    movie.setRunTime(e.getIn().getHeader("run_time", Integer.class));
+                    movie.setGenre(e.getIn().getHeader("genre", String.class));
+                    movie.setImdbRating(e.getIn().getHeader("imdb_rating", Float.class));
+                    String votes = e.getIn().getHeader("votes", String.class);
                     movie.setVotes(Integer.parseInt(votes.substring(1, votes.length() - 1).replace(",", "")));
-                    movie.setGrossTotal(Float.parseFloat((String) exchange.getIn().getHeader("gross_total")));
-                    exchange.getIn().setBody(movie);
+                    movie.setGrossTotal(e.getIn().getHeader("gross_total", Float.class));
+                    e.getIn().setBody(movie);
+                    System.out.println("title :"+movie.getMovieName());
                 })
-                .to("direct:insertMovie");
+                .to("direct:insertMovie");*/
 
         from("direct:insertMovie")
                 .to("jpa:" + Movie.class.getName());
