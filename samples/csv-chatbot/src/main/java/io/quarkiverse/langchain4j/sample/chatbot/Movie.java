@@ -5,9 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
+import org.apache.camel.dataformat.bindy.annotation.DataField;
 
 @Entity
 @Table(name = "movie", schema = "public")
+@CsvRecord(separator = ",")
 public class Movie {
 
     @Id
@@ -15,30 +18,39 @@ public class Movie {
     private int id;
 
     @Column(name = "index")
+    @DataField(pos = 1)
     private int index;
 
     @Column(name = "movie_name")
+    @DataField(pos = 2)
     private String movieName;
 
     @Column(name = "year_of_release")
+    @DataField(pos = 3)
     private int yearOfRelease;
 
     @Column(name = "category")
+    @DataField(pos = 4)
     private String category;
 
     @Column(name = "run_time")
+    @DataField(pos = 5)
     private int runTime;
 
     @Column(name = "genre")
+    @DataField(pos = 6)
     private String genre;
 
     @Column(name = "imdb_rating")
+    @DataField(pos = 7)
     private float imdbRating;
 
     @Column(name = "votes")
+    @DataField(pos = 8)
     private int votes;
 
     @Column(name = "gross_total")
+    @DataField(pos = 9)
     private float grossTotal;
 
     public int getId() {

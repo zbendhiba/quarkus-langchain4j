@@ -13,6 +13,7 @@ import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.dataformat.BindyType;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
@@ -32,12 +33,19 @@ public class CamelIngestor extends RouteBuilder {
     public void configure() throws Exception {
 
         // ingesting a CSV files listing the top 100 movies from IMDB
-      /*  from("file:src/main/resources?fileName=movies.csv")
-                .log("hello")
-                .split().tokenize("\n")
-                .unmarshal().csv()
-                .split().body()
-                .process(e -> {
+        from("file:src/main/resources/data?fileName=movies.csv&noop=true")
+                .log("$$$$$$$$$$hello")
+                .split(body().tokenize("\n")).streaming()
+                .choice()
+                    .when(header("CamelSplitIndex").isGreaterThan(0))
+                        .unmarshal().bindy(BindyType.Csv, Movie.class)
+                        .to("direct:insertMovie")
+                     .end();
+
+                //.unmarshal().bindy(BindyType.Csv, Movie.class)
+                //.unmarshal().csv()
+               // .split().body()
+              /*  .process(e -> {
                     Movie movie = new Movie();
                     movie.setIndex(e.getIn().getHeader("CamelCsvRecordIndex", Integer.class));
                     movie.setMovieName(e.getIn().getHeader("movie_name", String.class));
@@ -51,8 +59,8 @@ public class CamelIngestor extends RouteBuilder {
                     movie.setGrossTotal(e.getIn().getHeader("gross_total", Float.class));
                     e.getIn().setBody(movie);
                     System.out.println("title :"+movie.getMovieName());
-                })
-                .to("direct:insertMovie");*/
+                })*/
+               ;
 
         from("direct:insertMovie")
                 .to("jpa:" + Movie.class.getName());
