@@ -26,29 +26,17 @@ public class CamelIngestor extends RouteBuilder {
 
 
 
+
+
+
+
         // importing playing now movies from an external API
         from("direct:import-movies-playing-now")
                 .setHeader("Authorization", constant("Bearer " + apiToken))
                 .to("https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1")
                 .split().jsonpathWriteAsString("$.results[*]")
-                .to("direct:process-each-movie");
-
-        from("direct:process-each-movie")
-                // transform body
-                .process(e->{
-                    JsonNode movieNode = e.getIn().getBody(JsonNode.class);
-                    Movie movie = new Movie();
-                    movie.setMovieName(movieNode.get("original_title").asText());
-                    String releaseDate = movieNode.get("release_date").asText();
-                    int yearOfRelease = Integer.parseInt(releaseDate.substring(0, 4));
-                    movie.setYearOfRelease(yearOfRelease);
-                    movie.setImdbRating(movieNode.get("vote_average").floatValue());
-                    movie.setVotes(movieNode.get("vote_count").asInt());
-                    movie.setGrossTotal(movieNode.get("vote_average").floatValue());
-                    e.getIn().setBody(movie);
-                })
+                .bean(MovieTranslator.class)
                 .to("jpa:" + Movie.class.getName());
-
 
     }
 }
