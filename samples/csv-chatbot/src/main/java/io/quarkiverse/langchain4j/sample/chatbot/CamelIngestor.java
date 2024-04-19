@@ -1,13 +1,7 @@
 package io.quarkiverse.langchain4j.sample.chatbot;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import io.quarkiverse.langchain4j.sample.chatbot.model.external.MovieExternalPojo;
-import io.quarkiverse.langchain4j.sample.chatbot.model.external.MovieGenres;
-import io.quarkus.runtime.StartupEvent;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -19,14 +13,6 @@ public class CamelIngestor extends RouteBuilder {
     @ConfigProperty(name = "themoviedb.api.key")
     String apiToken;
 
-    @Inject
-    ProducerTemplate producerTemplate;
-
-    Map<Integer, String> movieGenres;
-
-    public void ingest(@Observes StartupEvent event) {
-        movieGenres =  producerTemplate.requestBody("direct:getGenres", null, Map.class);
-    }
 
     public void configure() throws Exception {
 
@@ -48,39 +34,21 @@ public class CamelIngestor extends RouteBuilder {
                 .to("direct:process-each-movie");
 
         from("direct:process-each-movie")
-                .unmarshal().json(MovieExternalPojo.class)
-                .log("body ${body}")
-              //  .unmarshal().json()
                 // transform body
                 .process(e->{
-                    MovieExternalPojo theMovie = e.getIn().getBody(MovieExternalPojo.class);
-                    String genres = theMovie.getGenreIds().stream()
-                            .map(movieGenres::get)
-                            .collect(Collectors.joining(", "));
-
+                    JsonNode movieNode = e.getIn().getBody(JsonNode.class);
                     Movie movie = new Movie();
-                    movie.setIndex(theMovie.getId());
-                    movie.setMovieName(theMovie.getTitle());
-                    movie.setYearOfRelease(theMovie.getReleaseDate().getYear());
-
-                    movie.setGenre(genres);
-                    movie.setImdbRating(theMovie.getVoteAverage());
-
-                    movie.setVotes(theMovie.getVoteCount());
-                    movie.setGrossTotal(theMovie.getVoteAverage());
+                    movie.setMovieName(movieNode.get("title").asText());
+                    String releaseDate = movieNode.get("release_date").asText();
+                    int yearOfRelease = Integer.parseInt(releaseDate.substring(0, 4));
+                    movie.setYearOfRelease(yearOfRelease);
+                    movie.setImdbRating(movieNode.get("vote_average").floatValue());
+                    movie.setVotes(movieNode.get("vote_count").asInt());
+                    movie.setGrossTotal(movieNode.get("vote_average").floatValue());
                     e.getIn().setBody(movie);
                 })
-                .log("transformed :: ${body}")
-
                 .to("jpa:" + Movie.class.getName());
 
-
-        from("direct:getGenres")
-                .setHeader("Authorization", constant("Bearer " + apiToken))
-                .to("https://api.themoviedb.org/3/genre/movie/list?language=en")
-                .unmarshal().json(MovieGenres.class)
-                .log("result is ${body}")
-                .bean(GenreTransformer.class);
 
     }
 }
