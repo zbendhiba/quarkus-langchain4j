@@ -1,12 +1,10 @@
 package io.quarkiverse.langchain4j.sample.chatbot;
 
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import io.quarkiverse.langchain4j.sample.chatbot.model.external.MovieExternalPojo;
 import io.quarkiverse.langchain4j.sample.chatbot.model.external.MovieGenres;
-import io.quarkiverse.langchain4j.sample.chatbot.model.external.MoviesNow;
-import io.quarkiverse.langchain4j.sample.chatbot.model.external.TheMovie;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
@@ -46,16 +44,16 @@ public class CamelIngestor extends RouteBuilder {
         from("direct:import-movies-playing-now")
                 .setHeader("Authorization", constant("Bearer " + apiToken))
                 .to("https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1")
-                .unmarshal().json(MoviesNow.class)
-                .log("before split ${body}")
-                .split(simple("${body.results}"))
+                .split().jsonpathWriteAsString("$.results[*]")
                 .to("direct:process-each-movie");
 
         from("direct:process-each-movie")
+                .unmarshal().json(MovieExternalPojo.class)
                 .log("body ${body}")
+              //  .unmarshal().json()
                 // transform body
                 .process(e->{
-                    TheMovie theMovie = e.getIn().getBody(TheMovie.class);
+                    MovieExternalPojo theMovie = e.getIn().getBody(MovieExternalPojo.class);
                     String genres = theMovie.getGenreIds().stream()
                             .map(movieGenres::get)
                             .collect(Collectors.joining(", "));

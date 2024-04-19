@@ -6,7 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class TheMovie {
+public class MovieExternalPojo {
     @JsonProperty("adult")
     private boolean adult;
 
