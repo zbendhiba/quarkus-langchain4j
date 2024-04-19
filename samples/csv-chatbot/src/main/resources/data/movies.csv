@@ -1,12 +1,12 @@
 index,movie_name,year_of_release,category,run_time,genre,imdb_rating,votes,gross_total
 1,The Godfather,1972,R,175,"Crime, Drama",9.2,1860471,134.97
-2,The Silence of the Lambs,1991,R,118,"Crime, Drama, Thriller",8.6,1435344,130.74
+2,The Silence of the Lambs,1991,R,118,"Crime, Drama, Thriller",8.6,143534",130.74
 3,Star Wars: Episode V - The Empire Strikes Back,1980,PG,124,"Action, Adventure, Fantasy",8.7,1294805,290.48
 4,The Shawshank Redemption,1994,R,142,Drama,9.3,2683302,28.34
 5,The Shining,1980,R,146,"Drama, Horror",8.4,1025560,44.02
 6,Casablanca,1942,PG,102,"Drama, Romance, War",8.5,574092,1.02
 7,One Flew Over the Cuckoo's Nest,1975,R,133,Drama,8.7,1010102,112.00
-8,Indiana Jones and the Raiders of the Lost Ark,1981,PG,115,"Action, Adventure",8.4,969143,248.16
+8,Indiana Jones and the Raiders of the Lost Ark,1981,PG,115,"Action, Adventure",8.4,96914,248.16
 9,The Lord of the Rings: The Return of the King,2003,PG-13,201,"Action, Adventure, Drama",9,1849082,377.85
 10,Star Wars: Episode IV - A New Hope,1977,PG,121,"Action, Adventure, Fantasy",8.6,1367430,322.74
 11,The Dark Knight,2008,PG-13,152,"Action, Crime, Drama",9,2656768,534.86
@@ -48,7 +48,7 @@ index,movie_name,year_of_release,category,run_time,genre,imdb_rating,votes,gross
 47,2001: A Space Odyssey,1968,G,149,"Adventure, Sci-Fi",8.3,671980,56.95
 48,Kill Bill: Vol. 1,2003,R,111,"Action, Crime, Drama",8.2,1119120,70.10
 49,Avanti!,1972,R,144,"Comedy, Romance",7.2,10748,3.30
-50,The Good the Bad and the Ugly,1966,Approved,178,"Adventure, Western",8.8,763678,6.10
+50,"The Good, the Bad and the Ugly",1966,Approved,178,"Adventure, Western",8.8,763678,6.10
 51,Amélie,2001,R,122,"Comedy, Romance",8.3,759411,33.23
 52,Modern Times,1936,G,87,"Comedy, Drama, Romance",8.5,244162,0.16
 53,Lost in Translation,2003,R,102,"Comedy, Drama",7.7,458613,44.59
