@@ -1,9 +1,6 @@
 package io.quarkiverse.langchain4j.sample.chatbot;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.BindyType;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
