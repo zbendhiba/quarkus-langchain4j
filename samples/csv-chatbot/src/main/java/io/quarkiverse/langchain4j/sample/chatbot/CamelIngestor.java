@@ -38,7 +38,7 @@ public class CamelIngestor extends RouteBuilder {
                 .process(e->{
                     JsonNode movieNode = e.getIn().getBody(JsonNode.class);
                     Movie movie = new Movie();
-                    movie.setMovieName(movieNode.get("title").asText());
+                    movie.setMovieName(movieNode.get("original_title").asText());
                     String releaseDate = movieNode.get("release_date").asText();
                     int yearOfRelease = Integer.parseInt(releaseDate.substring(0, 4));
                     movie.setYearOfRelease(yearOfRelease);
