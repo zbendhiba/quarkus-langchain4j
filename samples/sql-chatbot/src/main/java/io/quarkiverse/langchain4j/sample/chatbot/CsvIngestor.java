@@ -13,8 +13,6 @@ public class CsvIngestor extends RouteBuilder {
         from("file:src/main/resources/data?fileName=movies.csv&noop=true")
                 .log("**** ingesting a CSV files listing the top 100 movies from IMDB")
                 .unmarshal().bindy(BindyType.Csv, Movie.class)
-                .split(body())
-                .streaming()
-                .to("jpa:" + Movie.class.getName());
+                .to("jpa:" + Movie.class.getName()+"?entityType=java.util.List ");
     }
 }
