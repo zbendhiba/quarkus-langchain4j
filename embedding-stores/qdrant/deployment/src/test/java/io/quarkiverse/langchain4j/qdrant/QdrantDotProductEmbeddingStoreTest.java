@@ -14,16 +14,18 @@ import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2q.AllMiniLmL6V2QuantizedEmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.EmbeddingStoreWithoutMetadataIT;
-import dev.langchain4j.store.embedding.qdrant.QdrantEmbeddingStore;
+import io.quarkiverse.langchain4j.qdrant.runtime.QdrantEmbeddingStore;
 import io.quarkus.test.QuarkusUnitTest;
 
-public class QdrantEmbeddingStoreTest extends EmbeddingStoreWithoutMetadataIT {
+// Tests the embedding store with Dot product distance. For normalized vectors (as produced by most embedding
+// models), dot product equals cosine similarity, so scores remain in [-1, 1] and normalization holds.
+public class QdrantDotProductEmbeddingStoreTest extends EmbeddingStoreWithoutMetadataIT {
 
-    public static final String COLLECTION_NAME = "qdrant_test_embeddings";
+    public static final String COLLECTION_NAME = "qdrant_dot_test_embeddings";
 
     @RegisterExtension
     static final QuarkusUnitTest unitTest = new QuarkusUnitTest()
-            .setArchiveProducer(QdrantEmbeddingStoreTest::archive);
+            .setArchiveProducer(QdrantDotProductEmbeddingStoreTest::archive);
 
     @Inject
     QdrantEmbeddingStore embeddingStore;
@@ -58,12 +60,10 @@ public class QdrantEmbeddingStoreTest extends EmbeddingStoreWithoutMetadataIT {
 
     private static JavaArchive archive() {
         Asset properties = new StringAsset(String.join("\n",
-                "quarkus.langchain4j.qdrant.devservices.service-name=" + COLLECTION_NAME,
-                "quarkus.langchain4j.qdrant.devservices.port=6334",
-                "quarkus.langchain4j.qdrant.devservices.collection.vector-params.distance=Cosine",
-                "quarkus.langchain4j.qdrant.devservices.collection.vector-params.size=384"));
+                "quarkus.langchain4j.qdrant.collection-name=" + COLLECTION_NAME,
+                "quarkus.qdrant.devservices.collections." + COLLECTION_NAME + ".vector-size=384",
+                "quarkus.qdrant.devservices.collections." + COLLECTION_NAME + ".distance=Dot"));
 
         return ShrinkWrap.create(JavaArchive.class).addAsResource(properties, "application.properties");
     }
-
 }

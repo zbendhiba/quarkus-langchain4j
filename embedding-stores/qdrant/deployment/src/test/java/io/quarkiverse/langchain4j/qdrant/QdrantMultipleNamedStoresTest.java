@@ -1,5 +1,6 @@
 package io.quarkiverse.langchain4j.qdrant;
 
+// Tests that multiple named stores (@EmbeddingStoreName) can be used simultaneously with the default store disabled.
 import static org.assertj.core.api.Assertions.assertThat;
 
 import jakarta.inject.Inject;
@@ -9,8 +10,8 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import dev.langchain4j.store.embedding.qdrant.QdrantEmbeddingStore;
 import io.quarkiverse.langchain4j.EmbeddingStoreName;
+import io.quarkiverse.langchain4j.qdrant.runtime.QdrantEmbeddingStore;
 import io.quarkus.test.QuarkusUnitTest;
 
 public class QdrantMultipleNamedStoresTest {
@@ -20,9 +21,7 @@ public class QdrantMultipleNamedStoresTest {
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class))
             .overrideConfigKey("quarkus.langchain4j.qdrant.default-store-enabled", "false")
             .overrideConfigKey("quarkus.langchain4j.qdrant.products.collection-name", "product_embeddings")
-            .overrideConfigKey("quarkus.langchain4j.qdrant.documents.collection-name", "doc_embeddings")
-            .overrideRuntimeConfigKey("quarkus.langchain4j.qdrant.products.host", "localhost")
-            .overrideRuntimeConfigKey("quarkus.langchain4j.qdrant.documents.host", "localhost");
+            .overrideConfigKey("quarkus.langchain4j.qdrant.documents.collection-name", "doc_embeddings");
 
     @Inject
     @EmbeddingStoreName("products")

@@ -11,11 +11,11 @@ import org.jboss.jandex.ParameterizedType;
 
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingStore;
-import dev.langchain4j.store.embedding.qdrant.QdrantEmbeddingStore;
 import io.quarkiverse.langchain4j.EmbeddingStoreName;
 import io.quarkiverse.langchain4j.deployment.EmbeddingStoreBuildItem;
+import io.quarkiverse.langchain4j.qdrant.runtime.QdrantEmbeddingStore;
 import io.quarkiverse.langchain4j.qdrant.runtime.QdrantRecorder;
-import io.quarkiverse.langchain4j.runtime.NamedConfigUtil;
+import io.quarkiverse.qdrant.runtime.QdrantClient;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
@@ -51,7 +51,10 @@ public class QdrantProcessor {
                     .defaultBean()
                     .unremovable()
                     .scope(ApplicationScoped.class)
-                    .createWith(recorder.qdrantStoreFunction(NamedConfigUtil.DEFAULT_NAME))
+                    .addInjectionPoint(ClassType.create(DotName.createSimple(QdrantClient.class)))
+                    .createWith(recorder.qdrantStoreFunction(
+                            buildTimeConfig.defaultConfig().collectionName(),
+                            buildTimeConfig.defaultConfig().payloadTextKey()))
                     .done());
 
             embeddingStoreProducer.produce(new EmbeddingStoreBuildItem());
@@ -75,7 +78,10 @@ public class QdrantProcessor {
                     .unremovable()
                     .scope(ApplicationScoped.class)
                     .addQualifier(storeNameQualifier)
-                    .createWith(recorder.qdrantStoreFunction(storeName))
+                    .addInjectionPoint(ClassType.create(DotName.createSimple(QdrantClient.class)))
+                    .createWith(recorder.qdrantStoreFunction(
+                            entry.getValue().collectionName(),
+                            entry.getValue().payloadTextKey()))
                     .done());
 
             embeddingStoreProducer.produce(new EmbeddingStoreBuildItem());
