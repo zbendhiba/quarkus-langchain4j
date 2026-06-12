@@ -144,7 +144,7 @@ public class QdrantEmbeddingStore implements EmbeddingStore<TextSegment> {
     @Override
     public void removeAll(Collection<String> ids) {
         qdrantClient.delete(collectionName)
-                .byIds(new ArrayList<>(ids))
+                .byIds(ids instanceof List<String> list ? list : new ArrayList<>(ids))
                 .execute();
     }
 
@@ -154,10 +154,6 @@ public class QdrantEmbeddingStore implements EmbeddingStore<TextSegment> {
         qdrantClient.delete(collectionName)
                 .byFilter(Map.of())
                 .execute();
-    }
-
-    public void clearStore() {
-        removeAll();
     }
 
     private static List<Float> toFloatList(float[] vector) {

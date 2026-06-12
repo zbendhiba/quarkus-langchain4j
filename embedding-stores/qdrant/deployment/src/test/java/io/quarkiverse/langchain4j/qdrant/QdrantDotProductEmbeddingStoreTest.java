@@ -45,7 +45,7 @@ public class QdrantDotProductEmbeddingStoreTest extends EmbeddingStoreWithoutMet
 
     @Override
     protected void clearStore() {
-        embeddingStore.clearStore();
+        embeddingStore.removeAll();
     }
 
     @Override

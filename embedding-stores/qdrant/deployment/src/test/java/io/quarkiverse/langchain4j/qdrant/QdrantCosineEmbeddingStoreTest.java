@@ -44,7 +44,7 @@ public class QdrantCosineEmbeddingStoreTest extends EmbeddingStoreWithoutMetadat
 
     @Override
     protected void clearStore() {
-        embeddingStore.clearStore();
+        embeddingStore.removeAll();
     }
 
     @Override
